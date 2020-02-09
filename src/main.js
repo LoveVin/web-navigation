@@ -81,13 +81,13 @@ let $global = $(".globalHeader");
 let $logo = $(".globalHeader .searchLogo");
 let logoFun = ()=>{
     if(isLogoUp){
-        $global.find('img').attr('src','/google.953ec577.png');
+        $global.find('img').attr('src','/google.7c5fff2d.png');
         $global.find('form').attr('action','https://www.google.com.hk/search');
         $global.find('input').attr('name','q');
         isLogoUp = false;
     }
     else{
-        $global.find('img').attr('src','/baidu.705500cf.png');
+        $global.find('img').attr('src','/baidu.53ea9fd2.png');
         $global.find('form').attr('action','https://www.baidu.com/s');
         $global.find('input').attr('name','wd');
         isLogoUp = true;
