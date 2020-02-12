@@ -1,8 +1,20 @@
-const hashString = localStorage.getItem('hashMap');
+/*const hashString = localStorage.getItem('hashMap');
 const hashObject = JSON.parse(hashString);
 const hashMap = hashObject || [
-    {url: 'https://www.acfun.cn/', siteLogo: 'A', siteName:'AcFun'},
-    {url: 'https://www.bilibili.com/',siteLogo: 'B',siteName: 'bilibili'}
+    {url: 'https://www.acfun.cn/', siteLogo: 'https://www.acfun.cn/favicon.ico', siteName:'AcFun'},
+    {url: 'https://www.bilibili.com/',siteLogo: 'https://www.bilibili.com/favicon.ico',siteName: 'bilibili'}
+];*/
+const staticHashGroupMap = [
+    {groupName: '娱乐', hashMap: [
+        {url: 'https://www.acfun.cn/', siteLogo: 'https://www.acfun.cn/favicon.ico', siteName:'AcFun'},
+        {url: 'https://www.bilibili.com/',siteLogo: 'https://www.bilibili.com/favicon.ico',siteName: 'bilibili'}
+    ]},
+    {groupName: '设计', hashMap: [
+        {url: 'https://huaban.com/', siteLogo: 'https://huaban.com/favicon.ico', siteName:'花瓣网'},
+        {url: 'https://www.zcool.com.cn/',siteLogo: 'https://www.zcool.com.cn/favicon.ico',siteName: '站酷'}
+    ]},
+    {groupName: '摄影', hashMap: []},
+    {groupName: '绘画', hashMap: []},
 ];
 const simplifyUrl = (url)=>{
     return url.replace('https://', '')
@@ -11,17 +23,90 @@ const simplifyUrl = (url)=>{
     .replace(/\/.*/, ''); //正则表达式删除/后面内容
 }
 
-/*页面刷新*/
-const render = ()=>{
+let lastSelect = 0;
+let currentSelect = 0;
+
+let startPos = 0;
+let endPos = 5;
+
+const hashString = localStorage.getItem('hashGroupMap');
+const hashObject = JSON.parse(hashString);
+const hashGroupMap = hashObject || staticHashGroupMap;
+
+$(".siteGroupList").on('click','li:not(.groupLast)', function(){
+    lastSelect = currentSelect;
+    currentSelect = $(this).index();
+    $(".siteGroupList li").each((index,node)=>{
+        if(index === currentSelect){
+            $(node).css('background','radial-gradient(circle, rgba(228,228,228,1) 0%, rgba(87,155,235,1) 100%)');
+        }
+        else{
+            $(node).css('background','none');
+        }
+    })
+    siteRender();
+})
+
+/*分组列表刷新*/
+const groupRender = (startPos, endPos)=>{
+    const $groupList = $('.siteGroupList');
+    let $lastGroup = $groupList.find('li.groupLast');
+    $groupList.find('li:not(.groupLast)').remove();
+    const groupLength = hashGroupMap.length;
+    if(groupLength > endPos){
+        for(let i = startPos; i <= endPos; i++){
+            const $groupLi = $(`
+            <li>${hashGroupMap[i].groupName}</li>
+            `).insertBefore($lastGroup);
+        }
+    }
+    else{
+        for(let i = startPos; i < groupLength; i++){
+            const $groupLi = $(`
+            <li>${hashGroupMap[i].groupName}</li>
+            `).insertBefore($lastGroup);
+        }
+    }
+    /*hashGroupMap.forEach((node, index)=>{
+        const $groupLi = $(`
+            <li>${node.groupName}</li>
+        `).insertBefore($lastGroup);
+    });*/
+}
+groupRender(startPos, endPos);
+$(".siteGroupList li:nth-child("+(currentSelect+1)+")").css('background','radial-gradient(circle, rgba(228,228,228,1) 0%, rgba(87,155,235,1) 100%)');
+
+$('.siteGroupAll .Arrowleft').on('click',()=>{
+    let length = hashGroupMap.length;
+    if(startPos > 0){
+        startPos -= 6;
+        endPos -= 6;
+    }
+    groupRender(startPos, endPos);
+    $(".siteGroupList li:nth-child("+(currentSelect+1)+")").css('background','radial-gradient(circle, rgba(228,228,228,1) 0%, rgba(87,155,235,1) 100%)');
+})
+$('.siteGroupAll .Arrowright').on('click',()=>{
+    let length = hashGroupMap.length
+    if(endPos < length){
+        startPos += 6;
+        endPos += 6;
+    }
+    groupRender(startPos, endPos);
+    $(".siteGroupList li:nth-child("+(currentSelect+1)+")").css('background','radial-gradient(circle, rgba(228,228,228,1) 0%, rgba(87,155,235,1) 100%)');
+})
+
+/*网站列表刷新*/
+const siteRender = ()=>{
     const $siteList = $(".siteList");
     let $last = $siteList.find("li.last");
     $siteList.find('li:not(.last)').remove();
-    hashMap.forEach((node, index)=>{
+    const $hashMap = hashGroupMap[currentSelect].hashMap;
+    $hashMap.forEach((node, index)=>{
         const $li = $(`
             <li>
                 <div class="site">
                     <div class="siteLogo">
-                        ${simplifyUrl(node.siteLogo)[0]}
+                        <img src="${node.siteLogo}" alt="${simplifyUrl(node.url)[0]}" title="${node.siteName}" width='24px' height='24px'>
                     </div>
                     <div class="siteName">${node.siteName}</div>
                     <div class="siteMore">
@@ -37,12 +122,24 @@ const render = ()=>{
         })
         $li.on('click', '.siteMore',(e)=>{
             e.stopPropagation();//js阻止li的事件冒泡
-            hashMap.splice(index, 1);
-            render();
+            $hashMap.splice(index, 1);
+            siteRender();
         })
     });
+    $('.siteList > li').hover(
+        function(){
+            $(this).css('cursor','pointer');
+            $(this).css('background','#f1f3f4');
+            $(this).children().eq(0).children().eq(2).css('display','block');
+        },
+        function(){
+            $(this).css('background','none');
+            $(this).children().eq(0).children().eq(2).css('display','none');
+        }
+    )
 }
-render();
+siteRender();
+
 $(".searchButton").on('click',()=>{
     $(".searchForm").submit();
 });
@@ -54,12 +151,13 @@ let addSite = ()=>{
     if(url.indexOf('http') !== 0){
         url = "https://" + url;
     }
-    hashMap.push({
+    const $hashMap = hashGroupMap[currentSelect].hashMap;
+    $hashMap.push({
         url: url,
-        siteLogo: url,
+        siteLogo: url+'/favicon.ico',
         siteName: name
     })
-    render();
+    siteRender();
 }
 
 /*按钮——添加网址*/
@@ -69,25 +167,19 @@ $('.buttonGroup.confirm').on('click',()=>{
     
 })
 
-/*离开页面前存储数据*/
-window.onbeforeunload = ()=>{
-    const hashString = JSON.stringify(hashMap);
-    localStorage.setItem('hashMap',hashString);
-}
-
 /*切换搜索引擎logo*/
 let isLogoUp = true;
 let $global = $(".globalHeader");
 let $logo = $(".globalHeader .searchLogo");
 let logoFun = ()=>{
     if(isLogoUp){
-        $global.find('img').attr('src','/google.7c5fff2d.png');
+        $global.find('img').attr('src','./images/google.png');
         $global.find('form').attr('action','https://www.google.com.hk/search');
         $global.find('input').attr('name','q');
         isLogoUp = false;
     }
     else{
-        $global.find('img').attr('src','/baidu.53ea9fd2.png');
+        $global.find('img').attr('src','./images/baidu.png');
         $global.find('form').attr('action','https://www.baidu.com/s');
         $global.find('input').attr('name','wd');
         isLogoUp = true;
@@ -95,9 +187,9 @@ let logoFun = ()=>{
 }
 $logo.on('click', logoFun);
 
-/*PC端*/
+/*国内外网站切换按钮*/
 let isSwitchOn = true;
-let $switch = $('.siteModule > .siteSwitch');
+let $switch = $('.siteModuleGroup .siteSwitch');
 let switchFun = ()=>{
     if(isSwitchOn){
         $switch.find('use').attr('xlink:href','#icon-switch-off');
@@ -116,10 +208,6 @@ $switch.on('click', switchFun);
     },1000);
 });*/
 
-/*window.onclick = ()=>{
-    console.log(layer.msg);
-    layer.msg('玩命提示中');
-}*/
 $('.settings').on('click',()=>{
     $('.modifyFrame').css('display','block');
     layer.open({
@@ -155,3 +243,48 @@ $(document).on('keydown', (e)=>{
         logoFun();
     }
 });
+
+/*切换分组*/
+$('.siteModule .siteModuleGroup').hover(
+    function(){
+        $(this).children().eq(1).children('.groupArrow').css('display','block');
+    },
+    function(){
+        $(this).children().eq(1).children('.groupArrow').css('display','none');
+    }
+)
+$('.siteGroupAll .Arrowleft').hover(
+    function(){
+        $(this).find('use').attr('xlink:href','#icon-left-colored');
+    },function(){
+        $(this).find('use').attr('xlink:href','#icon-left');
+    }
+)
+$('.siteGroupAll .Arrowright').hover(
+    function(){
+        $(this).find('use').attr('xlink:href','#icon-right-colored');
+    },
+    function(){
+        $(this).find('use').attr('xlink:href','#icon-right');
+    }
+)
+
+/*添加分组*/
+$('.siteGroupList .groupLast').on('click',()=>{
+    let name = window.prompt('请输入组名');
+    if(name !== null){
+        hashGroupMap.push({
+            groupName: name,
+            hashMap: []
+        });
+        groupRender(startPos, endPos);
+        $(".siteGroupList li:nth-child("+(currentSelect+1)+")").css('background','radial-gradient(circle, rgba(228,228,228,1) 0%, rgba(87,155,235,1) 100%)');
+        siteRender();
+    }
+})
+
+/*离开页面前存储数据*/
+/*window.onbeforeunload = ()=>{
+    const hashString = JSON.stringify(hashGroupMap);
+    localStorage.setItem('hashGroupMap',hashString);
+}*/
