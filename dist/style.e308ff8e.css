@@ -13,6 +13,30 @@ a{
     color: inherit;
     text-decoration: none;
 }
+
+/*layer.js自定义skin*/
+body .myskin{
+    
+}
+body .myskin .layui-layer-title{
+    background:#009f95; color:white; border: none;
+}
+body .myskin .layui-layer-btn{
+    
+}
+body .myskin .layui-layer-btn a{
+    background:#009f95;
+    font-size: 14px;
+    text-align: center;
+    color: white;
+}
+body .myskin .layui-layer-btn .layui-layer-btn1{
+    background:#009f95;
+    font-size: 14px;
+    text-align: center;
+    color: white;
+}
+
 @media (min-width: 500px){
     body{
         overflow-y: scroll;
@@ -35,6 +59,12 @@ a{
 /*css*/
 body{
     background: #eee;
+    background-image: url(/bg2.04ed6363.jpg);
+    background-size: cover;
+    height :100%;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 .globalHeader{
     margin: 80px 16px 20px;
@@ -125,9 +155,7 @@ body{
         height: 620px;
         overflow: hidden;
         border-radius: 6px;
-        -moz-box-shadow:2px 2px 20px #B5B5B5;
-        -webkit-box-shadow:2px 2px 20px #B5B5B5; 
-        box-shadow:2px 2px 20px #B5B5B5;
+        box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.3);
     }
 }
 .siteModule{
@@ -141,7 +169,7 @@ body{
 }
 .siteModule .siteModuleGroup{
     height: 30px;
-    background: #f5f5f7;
+    background: #eee;
 }
 @media (min-width: 500px){
     .siteModule .siteModuleGroup{
@@ -158,7 +186,7 @@ body{
 }
 @media (min-width: 500px){
     .siteModuleGroup .siteSwitch{
-        display: inline;
+       /* display: inline;*/
         position: absolute;
         top: 15px;
         right: 10px;
@@ -171,13 +199,16 @@ body{
         height: 30px;
     }
 }
+.siteGroupAll .groupArrow{
+    display: none;
+}
 @media (min-width: 500px){
     .siteModuleGroup .siteGroupAll{
         display: inline-block;
         position: relative;
     }
-    .siteGroupAll .groupArrow{
-        display: none;
+    .siteGroupAll .groupArrow.active{
+        display: block;
     }
     .siteGroupAll .groupArrow:hover{
         cursor:pointer;
@@ -204,6 +235,8 @@ body{
         max-width: 540px;
         overflow: hidden;
         border: 1px solid #CDCDCD;
+        transition: all .3s;
+        background: #fdfdfd;
     }
     .siteGroupList li{
         border-right: 1px solid #CDCDCD;
@@ -214,6 +247,9 @@ body{
     .siteGroupList li:hover{
         cursor:pointer;
         background: radial-gradient(circle, rgba(228,228,228,1) 0%, rgba(87,155,235,1) 100%) !important;
+    }
+    .siteGroupList li.active{
+        background: radial-gradient(circle, rgba(228,228,228,1) 0%, rgba(87,155,235,1) 100%);
     }
     .siteGroupList li:last-child{
         border: none;
@@ -237,20 +273,16 @@ body{
     }
 }
 .siteList > li{
-    /*margin-bottom: 18px;*/
-    /*border: 1px solid #ddd;*/
     border-radius: 5px;
 }
 @media (min-width: 500px){
     .siteList > li{
-        /*margin-right: 27px;
-        margin-bottom: 27px;*/
-        /*border: 1px solid #ddd;*/
+        cursor: pointer;
         border-radius: 10px;
     }
-    /*.siteList > li:hover{
+    .siteList > li.active{
         background: #f1f3f4;
-    }*/
+    }
 }
 .siteList .site{
     width: 100px;
@@ -283,6 +315,9 @@ body{
     right: 0;
     display: none;
 }
+.siteList .site .siteMore.active{
+    display: block;
+}
 .siteList .site .siteMore .icon{
     width: 20px;
     height: 20px;
@@ -312,89 +347,33 @@ body{
     font-size: 13px;
     margin-top: 15px;
 }
-.globalAside{
-    
-}
-.globalAside .midifyWebSite .modifyFrame{
+.midifyWebSite .modifyFrame{
     width: 300px;
     margin-left: auto;
     margin-right: auto;
     margin-top: 15px;
-    display: none;
 }
 .modifyFrame input{
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     width: 300px;
     height: 25px;
     border: none;;
-    border-radius: 5px;
+    padding: 10px;
     border: 1px solid #ddd;
 }
 .modifyFrame .mofifyName{
-    margin-bottom: 5px;
-}
-.modifyFrame .buttonGroup{
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-}
-.modifyFrame .buttonGroup button{
-    border: none;;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    padding: 3px;
-    padding-left: 12px;
-    padding-right: 12px;
-}
-.modifyFrame .buttonGroup .remove{
-    visibility: hidden;
-}
-/*.globalAside .settingsBox{
-    width: 240px;
-    height: 410px;
-    position: fixed;
-    bottom: 0;
-    right: 0;
-}*/
-.globalAside .settings{
-    width: 56px;
-    height: 56px;
-    background: #02AD7C;
-    border-radius: 50%;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.globalAside .settings:hover{
-    cursor: pointer;
-}
-.globalAside .settings .icon{
-    width: 25px;
-    height: 25px;
+    margin-bottom: 7px;
+    font-size: 14px;
+    color: gray;
 }
 @media (min-width: 500px){
 }/*媒体查询，里面的只管500px以上的样式*/
 @media (max-width: 500px){
 }/*媒体查询，里面的只管500px以下的样式*/
 
-.globalFooter{
-   
-}
-.globalFooter p{
-    text-align: center;
-    color: slategrey;
-}
-.globalFooter a:hover{
-    color: #02AD7C;
-}
-.blank1{
-    height: 80px;
-}
-.blank2{
-    height: 10px;
-} 
 
-/*# sourceMappingURL=style.509abcc7.css.map */
+.globalFooter .blank1{
+    height: 110px;
+}
+
+/*# sourceMappingURL=/style.e308ff8e.css.map */

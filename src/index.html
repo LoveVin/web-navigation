@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,
     maximum-scale=1,user-scalable=no,viewport-fit=cover">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>网站导航</title>
+    <title>NAV主页</title>
+    <link rel="icon" href="nav.ico" type="image/x-icon"/> 
     <link rel="stylesheet" href="style.css">
     <style type="text/css">
         .icon {
@@ -20,7 +21,7 @@
 
     <header class="globalHeader">
         <div class="searchLogo">
-            <img src="images/baidu.png" alt="">
+            <img src="./images/baidu.png" alt="">
         </div>
         <form class = "searchForm" method="GET" action="https://www.baidu.com/s">
             <input type="text" name="wd">
@@ -47,7 +48,7 @@
                         </svg>
                     </div>
                     <ul class="siteGroupList">
-                        <li class="groupLast">
+                        <li title="添加" class="groupLast">
                             <svg class="icon" aria-hidden="true">
                                 <use xlink:href="#icon-add"></use>
                             </svg>
@@ -62,7 +63,7 @@
             </div>
             <div class="siteModuleClass">
                 <ul class="siteList">
-                    <li class="last">
+                    <li title="新增网站" class="last">
                         <div class="siteAddButton">
                             <div class="addIcon">
                                 <svg class="icon" aria-hidden="true">
@@ -78,36 +79,10 @@
         
 
     </main>
-    <aside class="globalAside">
-        <div class="midifyWebSite">
-            <div class="modifyFrame">
-                <div class="mofifyName">名称</div>
-                <input type="text" class="name">
-                <div class="mofifyName" class="website">网址 </div>
-                <input type="text">
-                <div class="buttonGroup">
-                    <button class="remove">删除</button>
-                    <button class="confirm" onclick="function f(){console.log('ok');}">完成</button>
-                </div>
-            </div>
-        </div>
-        <!-- <div class="settingsBox">
-            
-        </div>-->
-        <div class="blank1">
-
-        </div>
-        <div class="settings">
-            <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-menu"></use>
-            </svg>
-        </div>
-    </aside>
     <footer class="globalFooter">
-       <p>©copyright  <a href="https://twinklelixn.top/">LoveVin</a></p>
-       <div class="blank2"></div>
+        <div class="blank1"></div>
     </footer>
-    <script src="//at.alicdn.com/t/font_1630802_q0qsv2q18cc.js"></script>
+    <script src="//at.alicdn.com/t/font_1630802_0c2bj9wsftf7.js"></script>
     <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
     <script src="main.js"></script>
