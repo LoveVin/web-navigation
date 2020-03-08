@@ -165,6 +165,7 @@ var is_mobi = navigator.userAgent.toLowerCase().match(/(ipod|iphone|android|cool
 
 if (is_mobi) {
   console.log('mobile');
+  $('.groupLast').css('display', 'none');
 
   render = function render() {
     hashGroupMap.forEach(function ($hashNode, index) {
@@ -526,12 +527,12 @@ $('.siteModuleClass').on('click', 'li .siteMore', function (e) {
 });
 /*离开页面前存储数据*/
 
-window.onbeforeunload = function () {
-  var hashString1 = JSON.stringify(hashGroupMap);
-  var hashString2 = JSON.stringify(curGroupIndex);
-  localStorage.setItem('hashGroupMap', hashString1);
-  localStorage.setItem('curGroupIndex', hashString2);
-};
+/*window.onbeforeunload = ()=>{
+    const hashString1 = JSON.stringify(hashGroupMap);
+    const hashString2 = JSON.stringify(curGroupIndex);
+    localStorage.setItem('hashGroupMap',hashString1);
+    localStorage.setItem('curGroupIndex',hashString2)
+}*/
 },{}],"C:/Users/Administrator/AppData/Local/Yarn/Data/global/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -560,7 +561,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "43956" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55746" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

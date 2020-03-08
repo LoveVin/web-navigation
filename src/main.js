@@ -34,6 +34,7 @@ let render;
 const is_mobi = navigator.userAgent.toLowerCase().match(/(ipod|iphone|android|coolpad|mmp|smartphone|midp|wap|xoom|symbian|j2me|blackberry|wince)/i) != null;
 if (is_mobi) {
     console.log('mobile');
+    $('.groupLast').css('display','none')
     render = ()=>{
         hashGroupMap.forEach(($hashNode, index)=>{
             const $siteList = $(".siteList");
@@ -439,9 +440,9 @@ $('.siteModuleClass').on('click','li .siteMore', function(e){
 })
 
 /*离开页面前存储数据*/
-window.onbeforeunload = ()=>{
+/*window.onbeforeunload = ()=>{
     const hashString1 = JSON.stringify(hashGroupMap);
     const hashString2 = JSON.stringify(curGroupIndex);
     localStorage.setItem('hashGroupMap',hashString1);
     localStorage.setItem('curGroupIndex',hashString2)
-}
+}*/
