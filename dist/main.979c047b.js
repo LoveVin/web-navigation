@@ -165,19 +165,52 @@ var is_mobi = navigator.userAgent.toLowerCase().match(/(ipod|iphone|android|cool
 
 if (is_mobi) {
   console.log('mobile');
-  $('.groupLast').css('display', 'none');
+  $('.siteModuleGroup').css('display', 'none');
 
   render = function render() {
+    var $div = '<div>';
     hashGroupMap.forEach(function ($hashNode, index) {
-      var $siteList = $(".siteList");
-      var $last = $siteList.find("li.last");
-      $siteList.find('li:not(.last)').remove();
+      $div += "\n                <div>\n                    <h4>".concat($hashNode.groupName, "</h4>\n                    <ul class=\"siteList\">\n            ");
       var hashMap = $hashNode.hashMap;
       hashMap.forEach(function (node, index) {
-        var $li = $("\n                    <li title=\"".concat(node.siteName, "\">\n                        <div class=\"site\">\n                            <div class=\"siteLogo\">\n                                <img src=\"").concat(node.siteLogo, "\" width='24px' height='24px'>\n                            </div>\n                            <div class=\"siteName\">").concat(node.siteName, "</div>\n                            <div class=\"siteMore\" data-url=\"").concat(node.url, "\">\n                                <svg class=\"icon\" aria-hidden=\"true\">\n                                    <use xlink:href=\"#icon-more\"></use>\n                                </svg>\n                            </div>\n                        </div>\n                    </li>\n                ")).insertBefore($last);
+        $div += "\n                    <li title=\"".concat(node.siteName, "\">\n                        <div class=\"site\">\n                            <div class=\"siteLogo\">\n                                <img src=\"").concat(node.siteLogo, "\" width='24px' height='24px'>\n                            </div>\n                            <div class=\"siteName\">").concat(node.siteName, "</div>\n                            <div class=\"siteMore\" data-url=\"").concat(node.url, "\">\n                                <svg class=\"icon\" aria-hidden=\"true\">\n                                    <use xlink:href=\"#icon-more\"></use>\n                                </svg>\n                            </div>\n                        </div>\n                    </li>\n                ");
       });
+      $div += "\n            <li title=\"\u65B0\u589E\u7F51\u7AD9\" class=\"last\">\n                <div class=\"siteAddButton\">\n                    <div class=\"addIcon\">\n                        <svg class=\"icon\" aria-hidden=\"true\">\n                            <use xlink:href=\"#icon-add\"></use>\n                        </svg>\n                    </div>\n                    <div class=\"addText\" title=\"\u65B0\u589E\u7F51\u7AD9\">\u65B0\u589E\u7F51\u7AD9</div>\n                </div>\n            </li>\n            </ul>\n            </div>\n            ";
     });
+    $div += "\n        <div>\n            <h4 class=\"groupLast\">\n                <svg class=\"icon\" aria-hidden=\"true\">\n                    <use xlink:href=\"#icon-add\"></use>\n                </svg>\n            </h4>\n        </div>\n        </div>\n        ";
+    $('.siteModuleClass').html($div);
   };
+
+  render();
+  /*分组的鼠标右单击修改分组信息*/
+
+  $(document).on('click', '.siteModuleClass h4:not(".groupLast")', function (e) {
+    e.preventDefault();
+    var liNode = e.currentTarget;
+    var selIndex = $('.siteModuleClass h4').index($(liNode));
+    layer.open({
+      type: 1,
+      title: '修改分组信息',
+      skin: 'myskin',
+      //加上边框
+      area: ['350px', '180px'],
+      //宽高
+      shade: [0.8, '#393D49'],
+      content: "\n            <div class=\"midifyWebSite\">\n                <div class=\"modifyFrame\">\n                    <div class=\"mofifyName\">\u540D\u79F0</div>\n                    <input type=\"text\" class=\"name\" value=".concat(liNode.textContent, ">\n                </div>\n            </div>\n            "),
+      btn: ['删除', '完成'],
+      yes: function yes(index, layero) {
+        hashGroupMap.splice(selIndex, 1);
+        render();
+        layer.close(index);
+      },
+      btn2: function btn2(index, layero) {
+        var name = $('.modifyFrame .name').val();
+        hashGroupMap[selIndex].groupName = name;
+        render();
+        layer.close(index);
+      }
+    });
+  });
 } else {
   /*页面刷新*/
   console.log('PC');
@@ -315,6 +348,39 @@ if (is_mobi) {
   }, function () {
     $(this).find('use').attr('xlink:href', '#icon-right');
   });
+  /*分组的鼠标右单击修改分组信息*/
+
+  $(document).on('contextmenu', '.siteGroupList li', function (e) {
+    e.preventDefault();
+    var liNode = $('.siteGroupList li').eq(curGroupIndex - startPos);
+
+    if (this === liNode[0]) {
+      layer.open({
+        type: 1,
+        title: '修改分组信息',
+        skin: 'myskin',
+        //加上边框
+        area: ['350px', '180px'],
+        //宽高
+        shade: [0.8, '#393D49'],
+        content: "\n                <div class=\"midifyWebSite\">\n                    <div class=\"modifyFrame\">\n                        <div class=\"mofifyName\">\u540D\u79F0</div>\n                        <input type=\"text\" class=\"name\" value=".concat(liNode[0].textContent, ">\n                    </div>\n                </div>\n                "),
+        btn: ['删除', '完成'],
+        yes: function yes(index, layero) {
+          hashGroupMap.splice(curGroupIndex, 1);
+          hashGroupMap[0].isActive = "active";
+          curGroupIndex = 0;
+          render();
+          layer.close(index);
+        },
+        btn2: function btn2(index, layero) {
+          var name = $('.modifyFrame .name').val();
+          hashGroupMap[curGroupIndex].groupName = name;
+          render();
+          layer.close(index);
+        }
+      });
+    }
+  });
 }
 /*切换搜索引擎logo*/
 
@@ -323,7 +389,9 @@ var isLogoUp = true;
 var $global = $(".globalHeader");
 var $logo = $(".globalHeader .searchLogo");
 
-var logoFun = function logoFun() {
+var logoFun = function logoFun(e) {
+  e.preventDefault();
+
   if (isLogoUp) {
     $global.find('img').attr('src', './images/google.png');
     $global.find('form').attr('action', 'https://www.google.com.hk/search');
@@ -338,6 +406,9 @@ var logoFun = function logoFun() {
 };
 
 $logo.on('click', logoFun);
+$('img').on('click', function (e) {
+  e.preventDefault();
+});
 /*搜索按钮点击事件*/
 
 $(".searchButton").on('click', function () {
@@ -361,7 +432,7 @@ var switchFun = function switchFun() {
 $switch.on('click', switchFun);
 /*添加分组按钮点击事件*/
 
-$('.siteGroupList .groupLast').on('click', function () {
+$('.groupLast').on('click', function () {
   layer.open({
     type: 1,
     title: '添加分组',
@@ -386,39 +457,6 @@ $('.siteGroupList .groupLast').on('click', function () {
       layer.close(index);
     }
   });
-});
-/*分组的鼠标右单击修改分组信息*/
-
-$(document).on('contextmenu', '.siteGroupList li', function (e) {
-  e.preventDefault();
-  var liNode = $('.siteGroupList li').eq(curGroupIndex - startPos);
-
-  if (this === liNode[0]) {
-    layer.open({
-      type: 1,
-      title: '修改分组信息',
-      skin: 'myskin',
-      //加上边框
-      area: ['350px', '180px'],
-      //宽高
-      shade: [0.8, '#393D49'],
-      content: "\n            <div class=\"midifyWebSite\">\n                <div class=\"modifyFrame\">\n                    <div class=\"mofifyName\">\u540D\u79F0</div>\n                    <input type=\"text\" class=\"name\" value=".concat(liNode[0].textContent, ">\n                </div>\n            </div>\n            "),
-      btn: ['删除', '完成'],
-      yes: function yes(index, layero) {
-        hashGroupMap.splice(curGroupIndex, 1);
-        hashGroupMap[0].isActive = "active";
-        curGroupIndex = 0;
-        render();
-        layer.close(index);
-      },
-      btn2: function btn2(index, layero) {
-        var name = $('.modifyFrame .name').val();
-        hashGroupMap[curGroupIndex].groupName = name;
-        render();
-        layer.close(index);
-      }
-    });
-  }
 });
 /*非添加分组按钮点击事件*/
 
@@ -527,11 +565,11 @@ $('.siteModuleClass').on('click', 'li .siteMore', function (e) {
 });
 /*离开页面前存储数据*/
 
-/*window.onbeforeunload = ()=>{
-    const hashString1 = JSON.stringify(hashGroupMap);
-    const hashString2 = JSON.stringify(curGroupIndex);
-    localStorage.setItem('hashGroupMap',hashString1);
-    localStorage.setItem('curGroupIndex',hashString2)
-}*/
+window.onbeforeunload = function () {
+  var hashString1 = JSON.stringify(hashGroupMap);
+  localStorage.setItem('hashGroupMap', hashString1);
+  var hashString2 = JSON.stringify(curGroupIndex);
+  localStorage.setItem('curGroupIndex', hashString2);
+};
 },{}]},{},["epB2"], null)
-//# sourceMappingURL=main.873fb6a8.js.map
+//# sourceMappingURL=main.979c047b.js.map

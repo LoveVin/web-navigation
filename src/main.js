@@ -34,15 +34,18 @@ let render;
 const is_mobi = navigator.userAgent.toLowerCase().match(/(ipod|iphone|android|coolpad|mmp|smartphone|midp|wap|xoom|symbian|j2me|blackberry|wince)/i) != null;
 if (is_mobi) {
     console.log('mobile');
-    $('.groupLast').css('display','none')
+    $('.siteModuleGroup').css('display','none')
     render = ()=>{
+        let $div ='<div>';
         hashGroupMap.forEach(($hashNode, index)=>{
-            const $siteList = $(".siteList");
-            const $last = $siteList.find("li.last");
-            $siteList.find('li:not(.last)').remove();
+            $div += `
+                <div>
+                    <h4>${$hashNode.groupName}</h4>
+                    <ul class="siteList">
+            `
             const hashMap = $hashNode.hashMap;
             hashMap.forEach((node, index)=>{
-                const $li = $(`
+                $div += `
                     <li title="${node.siteName}">
                         <div class="site">
                             <div class="siteLogo">
@@ -56,10 +59,69 @@ if (is_mobi) {
                             </div>
                         </div>
                     </li>
-                `).insertBefore($last);
+                `
             });
+            $div += `
+            <li title="新增网站" class="last">
+                <div class="siteAddButton">
+                    <div class="addIcon">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-add"></use>
+                        </svg>
+                    </div>
+                    <div class="addText" title="新增网站">新增网站</div>
+                </div>
+            </li>
+            </ul>
+            </div>
+            `
         })
+        $div += `
+        <div>
+            <h4 class="groupLast">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-add"></use>
+                </svg>
+            </h4>
+        </div>
+        </div>
+        `
+        $('.siteModuleClass').html($div)
     }
+    render();
+    /*分组的鼠标右单击修改分组信息*/
+    $(document).on('click','.siteModuleClass h4:not(".groupLast")', function(e){
+        e.preventDefault();
+        const liNode = e.currentTarget;
+        let selIndex = $('.siteModuleClass h4').index($(liNode))
+        layer.open({
+            type: 1,
+            title: '修改分组信息',
+            skin: 'myskin', //加上边框
+            area: ['350px', '180px'], //宽高
+            shade: [0.8, '#393D49'],
+            content: `
+            <div class="midifyWebSite">
+                <div class="modifyFrame">
+                    <div class="mofifyName">名称</div>
+                    <input type="text" class="name" value=${liNode.textContent}>
+                </div>
+            </div>
+            `,
+            btn: ['删除','完成'],
+            yes: function(index, layero){
+                hashGroupMap.splice(selIndex, 1);
+                render();
+                layer.close(index);
+            },
+            btn2: function(index, layero){
+                let name = $('.modifyFrame .name').val();
+                hashGroupMap[selIndex].groupName = name;
+                render();
+                layer.close(index);
+            }
+        });
+    })
 }else{
     /*页面刷新*/
     console.log('PC')
@@ -215,13 +277,50 @@ if (is_mobi) {
             $(this).find('use').attr('xlink:href','#icon-right');
         }
     )
+    /*分组的鼠标右单击修改分组信息*/
+    $(document).on('contextmenu','.siteGroupList li', function(e){
+        e.preventDefault();
+        const liNode = $('.siteGroupList li').eq(curGroupIndex - startPos);
+        if(this === liNode[0]){
+            layer.open({
+                type: 1,
+                title: '修改分组信息',
+                skin: 'myskin', //加上边框
+                area: ['350px', '180px'], //宽高
+                shade: [0.8, '#393D49'],
+                content: `
+                <div class="midifyWebSite">
+                    <div class="modifyFrame">
+                        <div class="mofifyName">名称</div>
+                        <input type="text" class="name" value=${liNode[0].textContent}>
+                    </div>
+                </div>
+                `,
+                btn: ['删除','完成'],
+                yes: function(index, layero){
+                    hashGroupMap.splice(curGroupIndex, 1);
+                    hashGroupMap[0].isActive = "active";
+                    curGroupIndex = 0;
+                    render();
+                    layer.close(index);
+                },
+                btn2: function(index, layero){
+                    let name = $('.modifyFrame .name').val();
+                    hashGroupMap[curGroupIndex].groupName = name;
+                    render();
+                    layer.close(index);
+                }
+            });
+        }
+    })
 }
 
 /*切换搜索引擎logo*/
 let isLogoUp = true;
 let $global = $(".globalHeader");
 let $logo = $(".globalHeader .searchLogo");
-let logoFun = ()=>{
+let logoFun = (e)=>{
+    e.preventDefault()
     if(isLogoUp){
         $global.find('img').attr('src','./images/google.png');
         $global.find('form').attr('action','https://www.google.com.hk/search');
@@ -236,6 +335,9 @@ let logoFun = ()=>{
     }
 }
 $logo.on('click', logoFun);
+$('img').on('click',(e)=>{
+    e.preventDefault()
+})
 
 /*搜索按钮点击事件*/
 $(".searchButton").on('click',()=>{
@@ -258,7 +360,7 @@ let switchFun = ()=>{
 $switch.on('click', switchFun);
 
 /*添加分组按钮点击事件*/
-$('.siteGroupList .groupLast').on('click',()=>{
+$('.groupLast').on('click',()=>{
     layer.open({
         type: 1,
         title: '添加分组',
@@ -286,43 +388,6 @@ $('.siteGroupList .groupLast').on('click',()=>{
             layer.close(index);
         }
     });
-})
-
-/*分组的鼠标右单击修改分组信息*/
-$(document).on('contextmenu','.siteGroupList li', function(e){
-    e.preventDefault();
-    const liNode = $('.siteGroupList li').eq(curGroupIndex - startPos);
-    if(this === liNode[0]){
-        layer.open({
-            type: 1,
-            title: '修改分组信息',
-            skin: 'myskin', //加上边框
-            area: ['350px', '180px'], //宽高
-            shade: [0.8, '#393D49'],
-            content: `
-            <div class="midifyWebSite">
-                <div class="modifyFrame">
-                    <div class="mofifyName">名称</div>
-                    <input type="text" class="name" value=${liNode[0].textContent}>
-                </div>
-            </div>
-            `,
-            btn: ['删除','完成'],
-            yes: function(index, layero){
-                hashGroupMap.splice(curGroupIndex, 1);
-                hashGroupMap[0].isActive = "active";
-                curGroupIndex = 0;
-                render();
-                layer.close(index);
-            },
-            btn2: function(index, layero){
-                let name = $('.modifyFrame .name').val();
-                hashGroupMap[curGroupIndex].groupName = name;
-                render();
-                layer.close(index);
-            }
-        });
-    }
 })
 
 /*非添加分组按钮点击事件*/
@@ -440,9 +505,9 @@ $('.siteModuleClass').on('click','li .siteMore', function(e){
 })
 
 /*离开页面前存储数据*/
-/*window.onbeforeunload = ()=>{
+window.onbeforeunload = ()=>{
     const hashString1 = JSON.stringify(hashGroupMap);
-    const hashString2 = JSON.stringify(curGroupIndex);
     localStorage.setItem('hashGroupMap',hashString1);
+    const hashString2 = JSON.stringify(curGroupIndex);
     localStorage.setItem('curGroupIndex',hashString2)
-}*/
+}
